@@ -54,3 +54,4 @@ dkms.conf
 # Self Defined Ignore Rules
 bitcpy
 bitcpy_op
+vector
