@@ -5,7 +5,7 @@
 
 /* vector with small buffer optimization */
 
-/* Define  */
+/* Define pointer with specific structure */
 #define STRUCT_BODY(type)                                                  \
     struct {                                                               \
         size_t size : 54, on_heap : 1, capacity : 6, flag1 : 1, flag2 : 1, \
@@ -19,7 +19,7 @@
         ? s                \
         : (size_t) 1 << (64 - __builtin_clzl(s)) /* next power of 2 */
 
-/* Declaration of vector */
+/* Declaration of vector, with one or multiple initial value */
 #define v(t, s, name, ...)                                              \
     union {                                                             \
         STRUCT_BODY(t);                                                 \
@@ -137,11 +137,35 @@ static NON_NULL void __vec_push_back(void *restrict vec,
 
 int main()
 {
+
+    /* Vector declaration with variable vec1 and vec2 */
     v(float, 3, vec1);
-    v(int, 2, vec2, 13, 42);
+    v(int, 2, vec2, 13, 42);  // Initiallize with value v[0]=13 and v[1]=42
+
+    printf("---------------------------------------------------------------------\n");
+
+    printf("vec1.size=%zu, on_heap(vec2)=%zu\n", vec1.size, vec2.size);
+
+    printf("vec1.on_heap=%d, vec2.on_heap=%d\n", vec1.on_heap, vec2.on_heap);
+
+    printf("vec1.capacity=%d, vec2.capacity=%d\n", vec1.capacity, vec2.capacity);
+
+    printf("vec1.filler=%d, vec2.filler=%d\n", vec1.filler, vec2.filler);
+
+/*    printf("vec1.flag_1=%d, vec2.flag_1=%d\n", vec1.flag_1, vec2.flag_1);
+
+    printf("vec1.flag_2=%d, vec2.flag_2=%d\n", vec1.flag_2, vec2.flag_2);
+
+    printf("vec1.flag_3=%d, vec2.flag_3=%d\n", vec1.flag_3, vec2.flag_3); */
+
+    printf("---------------------------------------------------------------------\n");
+
+    printf("capacity(vec1)=%zu, capacity(vec2)=%zu\n", vec_capacity(vec1),
+           vec_capacity(vec2));
 
     printf("pos(vec2,0)=%d, pos(vec2,1)=%d\n", vec_pos(vec2, 0),
            vec_pos(vec2, 1));
+
     vec_push_back(vec2, 88);
     vec_reserve(vec2, 100);
     printf("capacity(vec1)=%zu, capacity(vec2)=%zu\n", vec_capacity(vec1),
@@ -180,6 +204,12 @@ int main()
     display(vec1);
     vec_pop_back(vec1);
     display(vec1);
+
+
+/*    STRUCT_BODY(int) ss;
+
+    int x = 1;
+    ss.ptr = &x;*/
 
     return 0;
 }
